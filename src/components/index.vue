@@ -4,6 +4,7 @@
   <watch-header></watch-header>
   <order-data></order-data>
   <heat-map></heat-map>
+  <frame-box></frame-box>
 </div>
 </template>
 
@@ -12,6 +13,7 @@ import watchHeader from './header';
 import orderData from './orderData';
 import heatMap from './heatMap';
 import countryMap from './countryMap';
+import frameBox from './frame/index';
 
 export default {
   name: 'index',
@@ -20,6 +22,7 @@ export default {
     orderData,
     heatMap,
     countryMap,
+    frameBox,
   },
   data() {
     return {
