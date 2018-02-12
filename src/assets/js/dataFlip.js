@@ -30,47 +30,83 @@ $.fn.dataStatistics = function(options) {
     var s = "000000000" + num;
     return s.substr(s.length - size);
   }
-
-  ths.find('.digit_set').each(function() {
-    for (i = 0; i <= 9; i++) {
-      $(this).append(html);
-      currentDigit = $(this).find('.digit')[i];
-      $(currentDigit).find('.digit_wrap').append(i);
+  // 添加dom
+  if (!ths.find('.digit').length) {
+    console.log('111')
+    if (options.start < options.end) {
+      ths.find('.digit_set').each(function() {
+        for (i = 0; i <= 9; i++) {
+          $(this).append(html);
+          currentDigit = $(this).find('.digit')[i];
+          $(currentDigit).find('.digit_wrap').html(i);
+        }
+      });
+    } else {
+      ths.find('.digit_set').each(function() {
+        for (i = 9; i >= 0; i -= 1) {
+          $(this).append(html);
+          currentDigit = $(this).find('.digit')[9 - i];
+          $(currentDigit).find('.digit_wrap').html(i);
+        }
+      });
     }
-  });
+  } else {
+    ths.find('.digit').removeClass('active').removeClass('previous');
+    if (options.start < options.end) {
+      ths.find('.digit_set').each(function() {
+        for (i = 0; i <= 9; i++) {
+          currentDigit = $(this).find('.digit')[i];
+          $(currentDigit).find('.digit_wrap').html(i);
+        }
+      });
+    } else {
+      ths.find('.digit_set').each(function() {
+        for (i = 9; i >= 0; i -= 1) {
+          currentDigit = $(this).find('.digit')[9 - i];
+          $(currentDigit).find('.digit_wrap').html(i);
+        }
+      });
+    }
+  }
 
   //初始化数值填入
   $.each(nowNums, function(index, val) {
     var set = ths.find('.digit_set').eq(index);
     var i = parseInt(val)
-    set.find('.digit').eq(i).addClass('active');
-    if (i == 9) {
-      set.find('.digit').eq(0).addClass('previous');
+    if (options.start < options.end) {
+      set.find('.digit').eq(i).addClass('active');
+      if (i == 9) {
+        set.find('.digit').eq(0).addClass('previous');
+      } else {
+        set.find('.digit').eq(i - 1).addClass('previous');
+      }
     } else {
-      set.find('.digit').eq(i + 1).addClass('previous');
+      set.find('.digit').eq(9 - i).addClass('active');
+      if (i == 9) {
+        set.find('.digit').eq(9).addClass('previous');
+      } else {
+        set.find('.digit').eq(8 - i).addClass('previous');
+      }
     }
   });
 
   //初始化---------------------------------------end
 
-
   //执行
   function run() {
+    // console.log('111')
     var difference = Math.abs(options.end - options.start); //要执行动画的次数
     var timer = null;
     //每次要执行动画的时间
     var t = options.time / difference;
-
     //后一位数
     function increase() {
       //执行次数为0时,停止执行
       if (difference < 1) {
         clearInterval(timer1);
         return false;
-        // console.info('结束')
       }
       difference--;
-      // console.info(difference);
 
       //翻页动画
       var current = el.find('.active'),
@@ -86,17 +122,10 @@ $.fn.dataStatistics = function(options) {
         current.next().addClass('active');
       }
     }
-
-    //前一位数
-    function decrease() {
-
-    }
-    // if (options.start > options.end) {
-    //   timer1 = setInterval(decrease, 5000);
-    // } else {
-    //   timer1 = setInterval(increase, 3000);
-    // }
+    // debugger;
+    timer1 = setInterval(increase, t);
   }
+
   //当数字翻到9的时候，前一位数执行一次动画
   function prevNumber(ths) {
     var current = ths.find('.active'),
@@ -114,9 +143,6 @@ $.fn.dataStatistics = function(options) {
       current.next().addClass('active');
     }
   }
-  //当数字翻到0的时候，前一位数执行一次动画
-  function prevDecreaseNumber(ths) {
 
-  }
   run();
 };

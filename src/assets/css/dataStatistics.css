@@ -89,7 +89,7 @@
   font-weight: bold;
   line-height: 42.5px;
   height: 42.5px;
-  width: 172px;
+  /*width: 172px;*/
   border: 1px solid rgba(174, 190, 208, 0.26);
   border-radius: 6px;
   background-color: #000;
@@ -100,9 +100,6 @@
 
 .dataStatistics .digit_set {
   float: left;
- /* border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-  border: 1px solid #111111;*/
   width: 26px;
   height: 100%;
   box-sizing: border-box;
@@ -123,7 +120,6 @@
   overflow: hidden;
   height: 50%;
   width: 26px;
-  /*padding: 0 3.75px;*/
 }
 
 .dataStatistics .digit>div.digit_top,
@@ -134,7 +130,6 @@
   box-sizing: border-box;
   top: 0;
   z-index: 0;
-  /*border-radius: 10px 10px 0 0;*/
 }
 
 .dataStatistics .digit>div.digit_top:before,
@@ -158,7 +153,6 @@
   background-color: #000;
   bottom: 0;
   z-index: 0;
-  /*border-radius: 0 0 10px 10px;*/
 }
 
 .dataStatistics .digit>div.digit_bottom .digit_wrap,
@@ -170,7 +164,6 @@
 .dataStatistics .digit>div.digit_bottom:before,
 .dataStatistics .digit>div.shadow_bottom:before {
   content: "";
-  /*border-radius: 0 0 10px 10px;*/
   height: 100%;
   width: 100%;
   position: absolute;

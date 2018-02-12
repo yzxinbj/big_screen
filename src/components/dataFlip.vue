@@ -2,10 +2,10 @@
   <div ref="orderDataItem">
     <div class="title">
       <i class="icon" :class="{
-      'order': type==='order',
+      'orders': type==='orders',
       'distance': type==='distance',
-      'truck': type==='truck',
-      'tuotou': type==='tuotou',
+      'delivery': type==='delivery',
+      'delivered': type==='delivered',
       'warehouse': type==='warehouse',
       'weight': type==='weight',
       }"></i>
@@ -33,7 +33,7 @@
       color: #b4bdf2;
       font-size: 20px;
     }
-    .order {
+    .orders {
       .bg('order.png');
       margin-bottom: -4px;
     }
@@ -41,11 +41,11 @@
       .bg('distance.png');
       margin-bottom: -4px;
     }
-    .truck {
+    .delivery {
       .bg('truck.png');
       margin-bottom: -4px;
     }
-    .tuotou {
+    .delivered {
       .bg('tuotou.png');
       margin-bottom: -4px;
     }
@@ -70,38 +70,53 @@ export default {
     start: '',
     end: '',
     time: {
+      type: Number,
+      default: 60000,
+    },
+    len: {
       type: String,
-      default: '30000',
+      default: '6',
     },
   },
   data() {
     return {
       dom: null,
-      timer: null,
     };
   },
   mounted() {
-    this.setData();
+    this.initDom();
+    this.startFlip();
+  },
+  watch: {
+    end() {
+      this.startFlip();
+    },
   },
   methods: {
-    setData() {
-      this.dom = $(
-        `<div class="dataStatistics">
-          <div class="digit_set"></div>
-          <div class="digit_set"></div>
-          <div class="digit_set"></div>
-          <div class="digit_set"></div>
-          <div class="digit_set"></div>
-          <div class="digit_set set_last"></div>
-        </div>`);
-      $(this.$refs.orderDataItem).find('.dataStatistics').remove();
-      $(this.$refs.orderDataItem).append(this.dom);
-      $(this.$refs.orderDataItem).find('.dataStatistics').dataStatistics({
-        start: +this.start,
-        end: +this.end,
-        time: +this.time,
-        len: 6,
-      });
+    initDom() {
+      let domLength = +this.len;
+      if (domLength > 0) {
+        this.dom = $('<div class="dataStatistics"></div>');
+        while (domLength > 0) {
+          this.dom.append($('<div class="digit_set"></div>'));
+          domLength -= 1;
+        }
+        this.dom.children('div:last-child').addClass('set_last');
+
+        // $(this.$refs.orderDataItem).find('.dataStatistics').remove();
+        $(this.$refs.orderDataItem).append(this.dom);
+      }
+    },
+    startFlip() {
+      const domLength = +this.len;
+      if (domLength > 0) {
+        this.dom.dataStatistics({
+          start: +this.start,
+          end: +this.end,
+          time: +this.time,
+          len: +this.len,
+        });
+      }
     },
   },
 };

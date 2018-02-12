@@ -5,15 +5,26 @@ const path = require('path');
 
 module.exports = {
   dev: {
-
+    env: {
+      NODE_ENV: 'development',
+    },
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+      '/api': {
+        target: 'https://easy-mock.com/mock/5a7e8e0808a0d3721d1a744f', // 设置你调用的接口域名和端口号 别忘了加http
+        changeOrigin: true,
+      },
+    },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    // proxypath: 'https://easy-mock.com/mock/5a7e8e0808a0d3721d1a744f',
+    // context: [
+    //   '/api',
+    // ],
     autoOpenBrowser: true,
     errorOverlay: true,
     notifyOnErrors: true,
@@ -40,6 +51,7 @@ module.exports = {
     cacheBusting: true,
 
     cssSourceMap: true,
+
   },
 
   build: {
