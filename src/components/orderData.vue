@@ -1,13 +1,14 @@
 <template>
   <div class="orderData">
     <data-flip
+      v-for="item in dataTypes"
+      :key="item.id"
       :title="item.title"
       :type="item.type"
       :start="item.start"
       :end="item.end"
       :time="item.time"
-      v-for="item in dataTypes"
-      :key="item.id"
+      :len="item.len"
     />
   </div>
 </template>
@@ -37,19 +38,30 @@ export default {
   },
   data() {
     return {
+      interval: 20000,
       dataTypes,
     };
   },
   mounted() {
-    // this.setData();
-    // this.refreshData();
+    this.setData();
+    this.refreshData();
   },
   methods: {
     refreshData() {
-
+      setInterval(this.setData, this.interval);
     },
     setData() {
-
+      this.$http.get('/api/v1/bigscreen/get_order').then(res => {
+        if (res.data.code === 0) {
+          const orderData = res.data.info.data;
+          dataTypes.forEach(item => {
+            item.start = item.end;
+            item.end = orderData[item.type];
+            item.time = this.interval;
+          });
+          this.dataTypes = dataTypes;
+        }
+      });
     },
   },
 };
