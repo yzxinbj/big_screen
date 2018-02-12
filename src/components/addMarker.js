@@ -21,27 +21,13 @@ export default function (bmap, markerData) {
         </div>
       </div>`);
     $html.css({ left: marker.V.offsetLeft - 475, top: marker.V.offsetTop - 291.5 })
-      .appendTo($('#app'));
-    marker.hide();
-
-    let count = 0;
-    const timer = setInterval(() => {
-      $html.css({
-        'background-image': `url(/static/output/output${Math.floor(count / 20)}.png)`,
-        'background-position': `-${count % 20 * 200}px 0`,
-      });
-      count += 1;
-      if (count >= 20 && count <= 30) {
-        $html.find('.row').css('opacity', (count - 20) * 0.1);
-      }
-      if (count >= 130 && count <= 140) {
-        $html.find('.row').css('opacity', (140 - count) * 0.1);
-      }
-      if (count > 148) {
-        clearInterval(timer);
+      .appendTo($('#app'))
+      .fadeIn(500)
+      .delay(1000)
+      .fadeOut(500, () => {
         $html.remove();
         bmap.removeOverlay(marker);
-      }
-    }, 1000 / 18);
+      });
+    marker.hide();
   }, 0);
 }

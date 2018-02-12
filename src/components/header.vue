@@ -31,7 +31,7 @@
       line-height: 28px;
       position: absolute;
       letter-spacing: 1px;
-      right: 37px;
+      left: 1600px;
       top: 16px;
 
       .hms {
@@ -40,6 +40,7 @@
     }
   }
 </style>
+
 <script>
 export default {
   name: 'watchHeader',

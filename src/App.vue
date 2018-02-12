@@ -17,7 +17,7 @@ export default {
 
 <style>
   #app {
-    background: url(./assets/images/bg.png) no-repeat;
+    background: url(./assets/images/bg2.png) no-repeat;
     height: 1080px;
     width: 1920px;
     overflow: hidden;

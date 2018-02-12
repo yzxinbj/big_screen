@@ -21,7 +21,7 @@
     position: absolute;
     width: 2400px;
     height: 1350px;
-    transform: translate(-16%,-11%) scale(0.82);
+    transform: translate(-23%, -9%) scale(0.82);
   }
   .anchorBL, .image {
     display:none;
@@ -30,20 +30,21 @@
     width: 200px;
     height: 183px;
     position: absolute;
-    background-position: 0 0;
-    background-size: 4000px 168px;
+    // background-position: 0 0;
+    // background-size: 4000px 168px;
     background-repeat: no-repeat;
+    background-image: url('../assets/images/bubble.png');
     z-index: 10;
     color: #fff;
     font-size: 14px;
     padding-top: 19px;
-
+    display: none;
 
     .row {
       margin-bottom: 12px;
       margin-left: 16px;
       display: flex;
-      opacity: 0;
+      // opacity: 0;
 
       .head {
         width: 38px;
@@ -64,237 +65,168 @@
   }
 </style>
 <script>
-import data from './bus-line';
-import animate from '../common/animate';
-
-const echarts = require('echarts');
-require('echarts/extension/bmap/bmap');
+// import beijing from '@/common/mapData/beijing';
+// import animate from '@/common/animate';
+// import weiboDataArr from './weibo';
+import addMarker from './addMarker';
+import placeList from './placeList';
+// console.log(placeList, 445)
+// const echarts = require('echarts');
+// require('echarts/extension/bmap/bmap');
 
 export default {
   name: 'countryMap',
   data() {
     return {
-      timer: null,
+      getDriverInterval: 60000,
+      bmap: null,
     };
   },
   mounted() {
     this.setMap();
-    // this.refreshMap();
+    // this.getDriver();
+    // this.refreshData();
   },
   methods: {
-    refreshMap() {
-      // this.timer = setInterval(this.setMap, 1000);
+    refreshData() {
+      setInterval(this.getDriver, this.getDriverInterval);
+    },
+    getDriver() {
+      this.$http.get('/api/v1/bigscreen/get_driver').then((res) => {
+        if (res.data.code === 0) {
+          const driverData = res.data.info.data;
+          let driverIndex = 0;
+          let showDriverTimer = setInterval(() => {
+            addMarker(this.bmap, driverData[driverIndex]);
+            driverIndex += 1;
+            if (driverIndex >= driverData.length) {
+              clearInterval(showDriverTimer);
+              showDriverTimer = null;
+            }
+          }, Math.floor(this.getDriverInterval / driverData.length));
+        }
+      });
     },
     setMap() {
-      const myChart = echarts.init(document.querySelector('.countryMap'));
-      const hStep = 300 / (data.length - 1);
-      const busLines = Array.from(data).map((busLine, idx) => {
-        let prevPt;
-        const points = [];
-        for (let i = 0; i < busLine.length; i += 2) {
-          let pt = [busLine[i], busLine[i + 1]];
-          if (i > 0) {
-            pt = [
-              prevPt[0] + pt[0],
-              prevPt[1] + pt[1],
-            ];
-          }
-          prevPt = pt;
+      const myChart = echarts2.init(document.querySelector('.countryMap'));
 
-          points.push([pt[0] / 1e4, pt[1] / 1e4]);
-        }
-        return {
-          coords: points,
-          lineStyle: {
-            normal: {
-              color: echarts.color.modifyHSL('#5A94DF', Math.round(hStep * idx)),
+      const option = {
+        backgroundColor: 'transparent',
+        series: [
+          {
+            type: 'map',
+            mapType: 'china',
+            hoverable: false,
+            roam: true,
+            itemStyle: {
+              normal: {
+                areaStyle: {
+                  color: '#0a0d25',
+                },
+              },
+            },
+            data: [],
+            markPoint: {
+              symbol: 'diamond',
+              symbolSize: 1,
+              large: true,
+              effect: {
+                show: true,
+                period: 10,
+                scaleSize: 100,
+                shadowBlur: 2,
+                shadowColor: 'rgba(37, 140, 249, 0.8)',
+                color: 'rgba(37, 140, 249, 0.8)',
+              },
+              data: (() => {
+                const data = [];
+                let len = 3000;
+                let geoCoord = null;
+                while (len--) {
+                  geoCoord = placeList[len % placeList.length].geoCoord;
+                  data.push({
+                    name: placeList[len % placeList.length].name + len,
+                    value: 10,
+                    geoCoord: [
+                      geoCoord[0] + Math.random() * 5 - 2.5,
+                      geoCoord[1] + Math.random() * 3 - 1.5,
+                    ],
+                  });
+                }
+                return data;
+              })(),
             },
           },
-        };
-      });
-      myChart.setOption({
-        bmap: {
-          center: [109.46, 39.92],
-          zoom: 6,
-          roam: false,
-          aspectScale: 0.9,
-          mapStyle: {
-            styleJson: [{
-              featureType: 'water',
-              elementType: 'all',
-              stylers: {
-                color: '#044161',
-                visibility: 'off',
+          {
+            type: 'map',
+            mapType: 'china',
+            data: [],
+            markPoint: {
+              symbol: 'diamond',
+              symbolSize: 1,
+              large: true,
+              effect: {
+                show: true,
+                period: 10,
+                scaleSize: 100,
+                shadowBlur: 1,
+                shadowColor: 'rgba(14, 241, 242, 0.8)',
+                color: 'rgba(14, 241, 242, 0.8)',
               },
-            }, {
-              featureType: 'land',
-              elementType: 'all',
-              stylers: {
-                color: '#2b2f54',
-              },
-            }, {
-              featureType: 'railway',
-              elementType: 'all',
-              stylers: {
-                visibility: 'off',
-              },
-            }, {
-              featureType: 'highway',
-              elementType: 'all',
-              stylers: {
-                visibility: 'off',
-              },
-            }, {
-              featureType: 'arterial',
-              elementType: 'all',
-              stylers: {
-                visibility: 'off',
-              },
-            }, {
-              featureType: 'poi',
-              elementType: 'all',
-              stylers: {
-                visibility: 'off',
-              },
-            }, {
-              featureType: 'green',
-              elementType: 'all',
-              stylers: {
-                visibility: 'off',
-              },
-            }, {
-              featureType: 'subway',
-              elementType: 'all',
-              stylers: {
-                visibility: 'off',
-              },
-            }, {
-              featureType: 'manmade',
-              elementType: 'all',
-              stylers: {
-                visibility: 'off',
-              },
-            }, {
-              featureType: 'local',
-              elementType: 'all',
-              stylers: {
-                visibility: 'off',
-              },
-            }, {
-              featureType: 'arterial',
-              elementType: 'all',
-              stylers: {
-                visibility: 'off',
-              },
-            // }, {
-            //   featureType: 'boundary',
-            //   elementType: 'all',
-            //   stylers: {
-            //     visibility: 'off',
-            //   },
-            }, {
-              featureType: 'boundary',
-              elementType: 'geometry',
-              stylers: {
-                color: '#8b8787',
-                weight: 1,
-                lightness: -29,
-              },
-            }, {
-              featureType: 'building',
-              elementType: 'all',
-              stylers: {
-                visibility: 'off',
-              },
-            }, {
-              featureType: 'label',
-              elementType: 'all',
-              stylers: {
-                visibility: 'off',
-              },
-            }],
+              data: (() => {
+                const data = [];
+                let len = 3000;
+                let geoCoord = null;
+                while (len--) {
+                  geoCoord = placeList[len % placeList.length].geoCoord;
+                  data.push({
+                    name: placeList[len % placeList.length].name + len,
+                    value: 50,
+                    geoCoord: [
+                      geoCoord[0] + Math.random() * 5 - 2.5,
+                      geoCoord[1] + Math.random() * 3 - 1.5,
+                    ],
+                  });
+                }
+                return data;
+              })(),
+            },
           },
-        },
-        // series: [{
-        //   type: 'lines',
-        //   coordinateSystem: 'bmap',
-        //   polyline: true,
-        //   data: busLines,
-        //   silent: true,
-        //   lineStyle: {
-        //     normal: {
-        //       color: '#ff7200',
-        //       opacity: 0.2,
-        //       width: 1,
-        //     },
-        //   },
-        //   progressiveThreshold: 500,
-        //   progressive: 200,
-        // }, {
-        //   type: 'lines',
-        //   coordinateSystem: 'bmap',
-        //   polyline: true,
-        //   data: busLines,
-        //   lineStyle: {
-        //     normal: {
-        //       width: 0,
-        //     },
-        //   },
-        //   effect: {
-        //     constantSpeed: 20,
-        //     show: true,
-        //     trailLength: 0.1,
-        //     symbolSize: 1.5,
-        //   },
-        //   zlevel: 1,
-        // }],
-      });
-      const bmap = myChart.getModel().getComponent('bmap').getBMap();
-      $(bmap.Va).css('background', 'transparent');
-      function addMarker(markerData) {
-        // const marker = new BMap.Marker(new BMap.Point(markerData.lng, markerData.lat));
-        const myIcon = new BMap.Icon('/static/transparency.png', new BMap.Size(10, 10));
-        const marker = new BMap.Marker(new BMap.Point(markerData.lng, markerData.lat), { icon: myIcon,
-          enableClicking: false,
-        });
-        bmap.addOverlay(marker);
-        setTimeout(() => {
-          let $html = $(`<div class="bubble">
-              <div class="row">
-                <img src="https://api.map.baidu.com/images/copyright_logo.png" class="head">
-                <span class="name">云鸟司机：张师傅</span>
-              </div>
-              <div class="row">
-                <span>车牌号：</span><span>京PG9**01</span>
-              </div>
-              <div class="row">
-                <span>订单状态：</span><span class="status">配送中</span>
-              </div>
-              <div class="row">
-                <span>所在城市：</span><span>北京</span>
-              </div>
-            </div>`);
-          $html.css({ left: marker.V.offsetLeft - 475, top: marker.V.offsetTop - 291.5 }).appendTo($('#app'));
-          marker.hide();
-          animate({
-            ele: $html,
-            framePerSecond: 18,
-            marker,
-            bmap,
-          });
-        }, 0);
-      }
-      let lng = 120;
-      let lat = 49;
-      const timer = setInterval(() => {
-        addMarker({
-          lng: lng -= 2,
-          lat: lat -= 2,
-        });
-        if (lng < 100) {
-          clearInterval(timer);
-        }
-      }, 1000);
+          {
+            type: 'map',
+            mapType: 'china',
+            hoverable: false,
+            roam: true,
+            data: [],
+            markPoint: {
+              symbol: 'diamond',
+              symbolSize: 1,
+              large: true,
+              effect: {
+                show: true,
+                period: 15,
+                scaleSize: 100,
+                shadowBlur: 2,
+                shadowColor: 'rgba(255, 255, 255, 0.8)',
+                color: 'rgba(255, 255, 255, 0.8)',
+              },
+              data: (() => {
+                const data = [];
+                let len = placeList.length;
+                while (len--) {
+                  data.push({
+                    name: placeList[len].name,
+                    value: 90,
+                    geoCoord: placeList[len].geoCoord,
+                  });
+                }
+                return data;
+              })(),
+            },
+          },
+        ],
+      };
+      myChart.setOption(option);
     },
     getMapData() {
 

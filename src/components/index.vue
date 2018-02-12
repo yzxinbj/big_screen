@@ -2,8 +2,8 @@
 <div>
   <country-map></country-map>
   <watch-header></watch-header>
-  <order-data></order-data>
-  <heat-map></heat-map>
+  <!-- <order-data></order-data> -->
+  <!-- <heat-map></heat-map> -->
 </div>
 </template>
 
