@@ -15,10 +15,10 @@
                     <span>{{item.carType}}</span>
                     <span :class="{
                             'jinbei': ~item.carType.indexOf('金杯'),
-                            'xianghuo': ~item.carType.indexOf('箱货'),
+                            'xianghuo': ~item.carType.indexOf('依维柯') || ~item.carType.indexOf('厢货') || ~item.carType.indexOf('高栏'),
                             'xiaomian': ~item.carType.indexOf('小面'),
                     }"></span>
-                    <span>{{item.percentage * 100}}%</span>
+                    <span>{{item.percentage}}</span>
                 </div>
             </div>
         </div>
@@ -40,10 +40,9 @@
   import CarInfo from './outOfTheCar.vue';
   import CarTypeInfo from './carTypeInfo.vue';
   const echarts = require('echarts');
-  
+
   import info from './getData.js';
   const cities_info = info.info.cities_info;
-
 
   export default {
     components: {
@@ -69,35 +68,32 @@
         framePerSecond: 18
       });
 
-      this.setBar(); 
+      this.setBar();
     },
     created () {
-
+      var carTypeInfo = [{"city":"宁波","carType":"4.2米厢货","percentage":"100%"},{"city":"厦门","carType":"平顶金杯","percentage":"54%"},{"city":"石家庄","carType":"4.2米厢货","percentage":"43%"},{"city":"北京","carType":"平顶金杯","percentage":"40%"},{"city":"郑州","carType":"高顶金杯","percentage":"40%"},{"city":"西安","carType":"高顶金杯","percentage":"40%"},{"city":"重庆","carType":"4.2米高栏","percentage":"39%"},{"city":"成都","carType":"平顶金杯","percentage":"39%"},{"city":"南京","carType":"4.2米厢货","percentage":"38%"},{"city":"杭州","carType":"4.2米厢货","percentage":"32%"},{"city":"济南","carType":"4.2米厢货","percentage":"31%"},{"city":"天津","carType":"高顶金杯","percentage":"29%"},{"city":"深圳","carType":"4.2米厢货","percentage":"29%"},{"city":"武汉","carType":"依维柯","percentage":"28%"},{"city":"广州","carType":"平顶金杯","percentage":"23%"},{"city":"苏州","carType":"4.2米厢货","percentage":"23%"},{"city":"长沙","carType":"依维柯","percentage":"21%"},{"city":"上海","carType":"4.2米厢货","percentage":"20%"},{"city":"青岛","carType":"小面","percentage":"19%"},{"city":"合肥","carType":"4.2米厢货","percentage":"17%"}];
+      
+      var se = this;
+      var count = 0;
+      
+      setInterval(()=>{
+        se.carTypeInfo = carTypeInfo.slice(count*4, count*4+4);
+        count++;
+        if(count >= Math.floor(carTypeInfo.length/4)) count = 0;
+      }, 5000);
     },
     data () {
       return {
         carTypeInfo: [
-          {
-            city: '北京',
-            carType: '金杯',
-            percentage: 0.50
-          },
-          {
-            city: '北京',
-            carType: '箱货',
-            percentage: 0.50
-          },
-          {
-            city: '北京',
-            carType: ' 小面',
-            percentage: 0.50
-          },
-          {
-            city: '北京',
-            carType: '金杯',
-            percentage: 0.50
-          },
-        ],
+          {"city": "宁波", "carType": "4.2米厢货", "percentage": "100%"}, {
+            "city": "厦门",
+            "carType": "平顶金杯",
+            "percentage": "54%"
+          }, {"city": "石家庄", "carType": "4.2米厢货", "percentage": "43%"}, {
+            "city": "北京",
+            "carType": "平顶金杯",
+            "percentage": "40%"
+          }],
       };
     },
     methods: {
@@ -111,7 +107,7 @@
           option.xAxis.data = cities_info.map(item => item.city).slice(count * 7, count * 7 + 7 > 20 ? 20 : count * 7 + 7);
           option.series[0].data = cities_info.map(item => item.delivery_time).slice(count * 7, count * 7 + 7 > 20 ? 20 : count * 7 + 7);
           option.series[1].data = cities_info.map(item => item.delivery_radius).slice(count * 7, count * 7 + 7 > 20 ? 20 : count * 7 + 7);
-          
+
           count++;
           if (count == 3) count = 0;
           myChart.setOption(option);
@@ -218,7 +214,7 @@
         box-sizing: border-box;
         padding: 5px 20px 0 30px;
         > div {
-            width: 190px;
+            width: 250px;
             height: 36px;
             display: flex;
             flex-flow: row nowrap;
@@ -228,7 +224,7 @@
             color: rgba(255, 255, 255, 0.7);
             align-items: center;
             &:nth-of-type(odd) {
-                margin-right: 80px;
+                margin-right: 10px;
             }
             > span {
                 &.city-title {
