@@ -2,50 +2,7 @@ const echarts = require('echarts');
 
 const gridColor = '#183d4a';
 
-const info = {
-  code: 0,
-  info: {
-    cities_info: [
-      {
-        city: '北京',
-        delivery_time: 2.3, // 交付时长
-        delivery_radius: 800, // 配送半径
-      },
-      {
-        city: '上海',
-        delivery_time: 2.8,
-        delivery_radius: 700,
-      },
-      {
-        city: '北京',
-        delivery_time: 1.5, // 交付时长
-        delivery_radius: 500, // 配送半径
-      },
-      {
-        city: '上海',
-        delivery_time: 1.1,
-        delivery_radius: 400,
-      },
-      {
-        city: '北京',
-        delivery_time: 2.2, // 交付时长
-        delivery_radius: 500, // 配送半径
-      },
-      {
-        city: '上海',
-        delivery_time: 2.1,
-        delivery_radius: 700,
-      },
-      {
-        city: '上海',
-        delivery_time: 1.9,
-        delivery_radius: 400,
-      },
-    ],
-  },
-  msg: '',
-};
-
+import info from './getData.js';
 
 export default {
   xAxis: {

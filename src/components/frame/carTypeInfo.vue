@@ -6,7 +6,7 @@
             <div class="car-type-line"></div>
         </div>
         <div class="car-type-row two">
-            <div class="car-type-info-title">厢式货车9.6米：23.2%</div>
+            <div class="car-type-info-title">厢式货车4.2米：23.2%</div>
             <div class="car-type-icon"></div>
             <div class="car-type-line"></div>
         </div>
@@ -21,7 +21,7 @@
             <div class="car-type-line"></div>
         </div>
         <div class="car-type-row five">
-            <div class="car-type-info-title">厢式货车4.2米：10.2%</div>
+            <div class="car-type-info-title">高顶金杯：10.2%</div>
             <div class="car-type-icon"></div>
             <div class="car-type-line"></div>
         </div>

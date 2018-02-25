@@ -40,6 +40,10 @@
   import CarInfo from './outOfTheCar.vue';
   import CarTypeInfo from './carTypeInfo.vue';
   const echarts = require('echarts');
+  
+  import info from './getData.js';
+  const cities_info = info.info.cities_info;
+
 
   export default {
     components: {
@@ -65,11 +69,7 @@
         framePerSecond: 18
       });
 
-      var myChart = echarts.init(document.getElementById('echartsBox'));
-
-      var option = echartsConfig;
-
-      myChart.setOption(option);
+      this.setBar(); 
     },
     created () {
 
@@ -101,6 +101,22 @@
       };
     },
     methods: {
+      setBar(){
+        var myChart = echarts.init(document.getElementById('echartsBox'));
+
+        var option = echartsConfig;
+        var count = 1;
+
+        setInterval(function () {
+          option.xAxis.data = cities_info.map(item => item.city).slice(count * 7, count * 7 + 7 > 20 ? 20 : count * 7 + 7);
+          option.series[0].data = cities_info.map(item => item.delivery_time).slice(count * 7, count * 7 + 7 > 20 ? 20 : count * 7 + 7);
+          option.series[1].data = cities_info.map(item => item.delivery_radius).slice(count * 7, count * 7 + 7 > 20 ? 20 : count * 7 + 7);
+          
+          count++;
+          if (count == 3) count = 0;
+          myChart.setOption(option);
+        }, 5000);
+      },
       animate (opt) {
         var count = 0;
 
